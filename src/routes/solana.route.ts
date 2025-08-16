@@ -7,6 +7,7 @@ import { SolanaAirdrop, solanaAirdropSchema } from "../schema/solana.schema";
 import SolanaService from "../service/solana.service";
 import TokenRequestRepository from "../repository/token-request.repository";
 import { Chain } from "../enum/chain.enum";
+import { limiter } from "../utils/rate-limiter.util";
 
 
 export const solanaRouter = Router({
@@ -23,7 +24,7 @@ solanaRouter.route("/health-check")
 
 
 solanaRouter.route("/airdrop")
-.post(validatorMiddleware(solanaAirdropSchema), async(req: Request<{}, {}, SolanaAirdrop["body"], SolanaAirdrop["query"]>, res, next) => {
+.post(limiter, validatorMiddleware(solanaAirdropSchema), async(req: Request<{}, {}, SolanaAirdrop["body"], SolanaAirdrop["query"]>, res, next) => {
     try{
         let solanaService = new SolanaService();
         let txHash: string |  null = null;

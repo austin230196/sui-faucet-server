@@ -9,10 +9,10 @@ export const limiter = rateLimit({
         status: ResponseStatus.ERROR
     },
     legacyHeaders: false,
-    keyGenerator: (req) => {
-        // Rate limit by address from request body
-        return req.body.address;
-    },
+    // keyGenerator: (req) => {
+    //     // Rate limit by address from request body
+    //     return req.body.address;
+    // },
     // store: new RedisStore({
     //     sendCommand: (...args: string[]) => client.sendCommand(args)
     // })
