@@ -55,9 +55,14 @@ jobs:
             npm install --save --force
 
             
+            #Remove the old build
+            echo "Removing old build..."
+            rm -rf ./dist 
+
+
             # Build the application
             echo "Building application..."
-            rm -rf ./dist && npm run build
+            npm run build
             
             # Stop existing PM2 process if running
             echo "Stopping existing PM2 process..."
