@@ -17,7 +17,7 @@ export const limiter = rateLimit({
         // Rate limit by address from request body
         return req.body.address;
     },
-    store: new RedisStore({
-        sendCommand: (...args: string[]) => client.sendCommand(args)
-    })
+    // store: new RedisStore({
+    //     sendCommand: (...args: string[]) => client.sendCommand(args)
+    // })
 })
