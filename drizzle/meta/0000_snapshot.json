@@ -1,11 +1,11 @@
 {
-  "id": "476035bd-8e26-4589-835e-7b3bc09e43a1",
+  "id": "69b98c22-0fd6-401f-91b9-844cca865637",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.token_requests_table": {
-      "name": "token_requests_table",
+    "public.token_requests": {
+      "name": "token_requests",
       "schema": "",
       "columns": {
         "id": {
@@ -15,7 +15,7 @@
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "token_requests_table_id_seq",
+            "name": "token_requests_id_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -27,6 +27,18 @@
         },
         "address": {
           "name": "address",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "chain": {
+          "name": "chain",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "network": {
+          "name": "network",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true

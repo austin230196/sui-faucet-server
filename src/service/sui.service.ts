@@ -2,8 +2,6 @@ import {requestSuiFromFaucetV2, getFaucetHost} from "@mysten/sui/faucet";
 
 import AdvancedError from "../error/advanced.error";
 import config from "../config/index.config";
-import TokenRequestRepository from "../repository/token-request.repository";
-import { tokenRequest } from "../model/token-request.model";
 
 
 /**

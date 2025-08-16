@@ -1,4 +1,4 @@
-import {desc, eq} from "drizzle-orm";
+import {desc, eq, and} from "drizzle-orm";
 
 import { tokenRequest } from "../model/token-request.model";
 import db from "../db/pg";
@@ -29,12 +29,15 @@ export default class TokenRequestRepository {
 
     /**
      *  @description Get recent token requests
+     *  @param {typeof tokenRequest.$inferSelect["chain"]} chain - The chain of the token requests
+     *  @param {typeof tokenRequest.$inferSelect["network"]} network - The network of the token requests
      *  @param {number} len - The number of recent requests to get
      *  @returns {Promise<typeof tokenRequest.$inferSelect[]>} - The recent token requests
      */
-    public async getRecentRequests(len: number): Promise<typeof tokenRequest.$inferSelect[]> {
+    public async getRecentRequests(chain: typeof tokenRequest.$inferSelect["chain"], network: typeof tokenRequest.$inferSelect["network"], len: number): Promise<typeof tokenRequest.$inferSelect[]> {
         try{
-            let requests = await db.select().from(tokenRequest).orderBy(desc(tokenRequest.createdAt)).limit(len);
+            let requests = await db.select().from(tokenRequest).where(and(eq(tokenRequest.chain, chain), eq(tokenRequest.network, network))).orderBy(desc(tokenRequest.createdAt)).limit(len);
+            console.log("[*] Recent token requests fetched successfully ", JSON.stringify(requests, null, 4));
 
             return requests;
         }catch(e: any){
@@ -45,11 +48,13 @@ export default class TokenRequestRepository {
 
     /**
      *  @description Find all token requests
+     *  @param {typeof tokenRequest.$inferSelect["chain"]} chain - The chain of the token requests
+     *  @param {typeof tokenRequest.$inferSelect["network"]} network - The network of the token requests
      *  @returns {Promise<typeof tokenRequest.$inferSelect[]>} - The token requests
      */
-    public async findAll(): Promise<typeof tokenRequest.$inferSelect[]> {
+    public async findAll(chain: typeof tokenRequest.$inferSelect["chain"], network: typeof tokenRequest.$inferSelect["network"]): Promise<typeof tokenRequest.$inferSelect[]> {
         try{
-            let requests = await db.select().from(tokenRequest);
+            let requests = await db.select().from(tokenRequest).where(and(eq(tokenRequest.chain, chain), eq(tokenRequest.network, network)));
             console.log("[*] Token requests fetched successfully ", JSON.stringify(requests, null, 4));
 
             return requests;
@@ -61,23 +66,25 @@ export default class TokenRequestRepository {
 
     /**
      *  @description Get analytics
+     *  @param {typeof tokenRequest.$inferSelect["chain"]} chain - The chain of the token requests
+     *  @param {typeof tokenRequest.$inferSelect["network"]} network - The network of the token requests
      *  @returns {Promise<{totalRequests: number, totalSuiDistributed: number, activeUsers: number}>} - The analytics
      */
-    public async getAnalytics(): Promise<{
+    public async getAnalytics(chain: typeof tokenRequest.$inferSelect["chain"], network: typeof tokenRequest.$inferSelect["network"]): Promise<{
         totalRequests: number;
         totalSuiDistributed: number;
         activeUsers: number;
     }>
     {
         try{
-            let requests = await this.findAll();
+            let requests = await this.findAll(chain, network);
             let activeUsersToVists: Record<string, number> = {};
             for(let req of requests){
-                activeUsersToVists[req.address] = activeUsersToVists[req.address] || 0;
-                activeUsersToVists[req.address]++;
+                activeUsersToVists[req.address as string] = activeUsersToVists[req.address as string] || 0;
+                activeUsersToVists[req.address as string]++;
             }
             let totalRequests = requests.length;
-            let totalSuiDistributed = requests.reduce((acc, request) => acc + request.amount, 0);
+            let totalSuiDistributed = requests.reduce((acc, request) => acc + (request.amount as number), 0);
             let activeUsers = Object.keys(activeUsersToVists).length;
             return {
                 totalRequests,
@@ -93,11 +100,13 @@ export default class TokenRequestRepository {
     /**
      *  @description Find token requests by address
      *  @param {string} address - The address of the token requests
+     *  @param {typeof tokenRequest.$inferSelect["chain"]} chain - The chain of the token requests
+     *  @param {typeof tokenRequest.$inferSelect["network"]} network - The network of the token requests
      *  @returns {Promise<typeof tokenRequest.$inferSelect[]>} - The token requests
      */
-    public async findByAddress(address: string): Promise<typeof tokenRequest.$inferSelect[]> {
+    public async findByAddress(address: string, chain: typeof tokenRequest.$inferSelect["chain"], network: typeof tokenRequest.$inferSelect["network"]): Promise<typeof tokenRequest.$inferSelect[]> {
         try{
-            let requests = await db.select().from(tokenRequest).where(eq(tokenRequest.address, address))
+            let requests = await db.select().from(tokenRequest).where(and(eq(tokenRequest.address, address), eq(tokenRequest.chain, chain), eq(tokenRequest.network, network)))
             console.log("[*] Requests fetched successfully for " + address);
 
             return requests;
