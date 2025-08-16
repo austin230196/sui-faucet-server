@@ -1,4 +1,8 @@
 import rateLimit from "express-rate-limit";
+import {RedisStore} from "rate-limit-redis";
+import { client } from "../db/redis.db";
+
+
 import ResponseStatus from "../enum/response-status.enum";
 
 export const limiter = rateLimit({
@@ -9,11 +13,11 @@ export const limiter = rateLimit({
         status: ResponseStatus.ERROR
     },
     legacyHeaders: false,
-    // keyGenerator: (req) => {
-    //     // Rate limit by address from request body
-    //     return req.body.address;
-    // },
-    // store: new RedisStore({
-    //     sendCommand: (...args: string[]) => client.sendCommand(args)
-    // })
+    keyGenerator: (req) => {
+        // Rate limit by address from request body
+        return req.body.address;
+    },
+    store: new RedisStore({
+        sendCommand: (...args: string[]) => client.sendCommand(args)
+    })
 })

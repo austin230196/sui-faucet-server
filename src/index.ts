@@ -4,8 +4,6 @@ import path from "path";
 
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
-import {rateLimit} from "express-rate-limit";
-import {RedisStore} from "rate-limit-redis";
 
 import config from "./config/index.config";
 import { AddressInfo } from "net";
@@ -13,7 +11,6 @@ import AdvancedError from "./error/advanced.error";
 import StatusCode from "./enum/status-code.enum";
 import ResponseMapper from "./mapper/response.mapper";
 import { client } from "./db/redis.db";
-import ResponseStatus from "./enum/response-status.enum";
 import indexRouter from "./routes/index.route";
 
 const app = express();

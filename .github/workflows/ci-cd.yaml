@@ -53,18 +53,19 @@ jobs:
             # Install dependencies
             echo "Installing dependencies..."
             npm install --save --force
+
             
             # Build the application
             echo "Building application..."
-            npm run build
+            rm -rf ./dist && npm run build
             
             # Stop existing PM2 process if running
             echo "Stopping existing PM2 process..."
-            pm2 delete sui-faucet || true
+            pm2 delete faucet || true
             
             # Start the application with PM2
             echo "Starting application with PM2..."
-            pm2 start "node ./dist/index.js" --name=sui-faucet
+            pm2 start "node ./dist/index.js" --name=faucet
             
             # Save PM2 configuration
             pm2 save
